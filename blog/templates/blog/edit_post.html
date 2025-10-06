@@ -1,34 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактировать пост</title>
     <style>
-        .form-container { max-width: 600px; margin: 50px auto; padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
-        button:hover { background: #0056b3; }
-        .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .form-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .form-body {
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 200px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h2>Редактировать пост</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.title.label_tag }}
-                {{ form.title }}
+        <div class="form-header">
+            <h1>✏️ Редактировать пост</h1>
+            <p>Внесите изменения в ваш пост</p>
+        </div>
+        
+        <div class="form-body">
+            <!-- Сообщения об ошибках -->
+            {% if form.errors %}
+            <div class="error-message">
+                <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
             </div>
-            <div class="form-group">
-                {{ form.content.label_tag }}
-                {{ form.content }}
-            </div>
-            <button type="submit">Сохранить изменения</button>
-            <a href="{% url 'post_list' %}">Отмена</a>
-        </form>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Заголовок -->
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Заголовок поста</label>
+                    {{ form.title }}
+                </div>
+                
+                <!-- Категория и дата публикации -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">Категория</label>
+                        {{ form.category }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.published_date.id_for_label }}">Дата публикации</label>
+                        {{ form.published_date }}
+                    </div>
+                </div>
+                
+                <!-- Содержимое -->
+                <div class="form-group">
+                    <label for="{{ form.content.id_for_label }}">Содержимое поста</label>
+                    {{ form.content }}
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <a href="{% url 'post_list' %}" class="btn btn-secondary">← Отмена</a>
+                    <button type="submit" class="btn btn-primary">💾 Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>

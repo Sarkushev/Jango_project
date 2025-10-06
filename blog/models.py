@@ -20,7 +20,7 @@ class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Категория")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    published_date = models.DateTimeField(default=timezone.now, verbose_name="Дата публикации")
+    published_date = models.DateField(default=timezone.now, verbose_name="Дата публикации")  # ИЗМЕНЕНО: DateField вместо DateTimeField
     
     def __str__(self):
         return self.title

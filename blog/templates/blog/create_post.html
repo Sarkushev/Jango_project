@@ -168,6 +168,15 @@
             color: #e53e3e;
         }
         
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+        
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -192,6 +201,18 @@
         </div>
         
         <div class="form-body">
+            <!-- Сообщения об ошибках -->
+            {% if form.errors %}
+            <div class="error-message">
+                <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>{{ field.label }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <form method="post">
                 {% csrf_token %}
                 
@@ -264,11 +285,12 @@
         titleCount.textContent = titleInput.value.length;
         contentCount.textContent = contentInput.value.length;
         
-        // Установка минимальной даты для публикации
+        // Установка текущей даты по умолчанию для публикации
         const publishedDateInput = document.getElementById('{{ form.published_date.id_for_label }}');
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        publishedDateInput.min = now.toISOString().slice(0, 16);
+        if (publishedDateInput && !publishedDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            publishedDateInput.value = today;
+        }
     </script>
 </body>
 </html>

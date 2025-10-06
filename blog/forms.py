@@ -19,9 +19,9 @@ class PostForm(forms.ModelForm):
             'category': forms.Select(attrs={
                 'class': 'form-control'
             }),
-            'published_date': forms.DateTimeInput(attrs={
+            'published_date': forms.DateInput(attrs={  # ИЗМЕНЕНО: DateInput вместо DateTimeInput
                 'class': 'form-control',
-                'type': 'datetime-local'
+                'type': 'date'  # ИЗМЕНЕНО: type="date" вместо type="datetime-local"
             }),
         }
         labels = {
