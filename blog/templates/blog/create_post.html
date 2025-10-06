@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать новый пост</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .form-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .author-info {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .author-info p {
+            margin: 0.25rem 0;
+            color: #4a5568;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .character-count {
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e53e3e;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>📝 Создать новый пост</h1>
+            <p>Поделитесь своими мыслями с миром</p>
+        </div>
+        
+        <div class="form-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Информация об авторе -->
+                <div class="author-info">
+                    <p><strong>👤 Автор:</strong> {{ user.username }}</p>
+                    <p><strong>📅 Дата создания:</strong> {% now "d.m.Y H:i" %}</p>
+                </div>
+                
+                <!-- Заголовок -->
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}" class="required">Заголовок поста</label>
+                    {{ form.title }}
+                    <div class="character-count">
+                        <span id="title-count">0</span>/200 символов
+                    </div>
+                </div>
+                
+                <!-- Категория и дата публикации -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">Категория</label>
+                        {{ form.category }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.published_date.id_for_label }}">Дата публикации</label>
+                        {{ form.published_date }}
+                    </div>
+                </div>
+                
+                <!-- Содержимое -->
+                <div class="form-group">
+                    <label for="{{ form.content.id_for_label }}" class="required">Содержимое поста</label>
+                    {{ form.content }}
+                    <div class="character-count">
+                        <span id="content-count">0</span> символов
+                    </div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <a href="{% url 'post_list' %}" class="btn btn-secondary">← Назад</a>
+                    <button type="submit" class="btn btn-primary">
+                        📤 Опубликовать пост
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Счетчик символов для заголовка
+        const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+        const titleCount = document.getElementById('title-count');
+        
+        titleInput.addEventListener('input', function() {
+            titleCount.textContent = this.value.length;
+        });
+        
+        // Счетчик символов для содержимого
+        const contentInput = document.getElementById('{{ form.content.id_for_label }}');
+        const contentCount = document.getElementById('content-count');
+        
+        contentInput.addEventListener('input', function() {
+            contentCount.textContent = this.value.length;
+        });
+        
+        // Инициализация счетчиков
+        titleCount.textContent = titleInput.value.length;
+        contentCount.textContent = contentInput.value.length;
+        
+        // Установка минимальной даты для публикации
+        const publishedDateInput = document.getElementById('{{ form.published_date.id_for_label }}');
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        publishedDateInput.min = now.toISOString().slice(0, 16);
+    </script>
+</body>
+</html>
